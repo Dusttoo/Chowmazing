@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
+from passlib.context import CryptContext
 
 load_dotenv()
 
@@ -29,16 +30,26 @@ engine = sqlalchemy.create_engine(
 )
 # metadata.create_all(engine)
 
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 class CreateUser(BaseModel):
     username: str
-    hashed_password: str
+    password: str
     email: str
+
+    @classmethod
+    def hash_password(self, password):
+        return pwd_context.hash(password)
 
 class User(BaseModel):
     id: int
     username: str
     hashed_password: str
     email: str
+
+    @classmethod
+    def verify_password(self, plain_password):
+        return pwd_context.verify(plain_password, self.hashed_password)
 
 app = FastAPI()
 
@@ -78,6 +89,13 @@ async def get_users():
 @app.post("/users/", response_model=User)
 async def create_user(user: CreateUser):
     print(user)
-    query = users.insert().values(username=user.username, hashed_password=user.hashed_password, email=user.email)
+    password_hash = user.hash_password(user.password)
+    query = users.insert().values(username=user.username, hashed_password=password_hash, email=user.email)
     last_record_id = await database.execute(query)
-    return {**user.dict(), "id": last_record_id}
+    
+    return {
+        "id": last_record_id,
+        "username": user.username,
+        "hashed_password":password_hash,
+        "email": user.email
+    }
