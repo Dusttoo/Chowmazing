@@ -8,10 +8,6 @@ import { useRouter } from 'next/router';
 function MyApp({ Component, pageProps }) {
   const [user, setUser] = useState(null)
   const router = useRouter();
-  const [publicRoute, setPublicRoute] = useState(false)
-  const publicRoutes = ['signup', 'login', 'home']
-
-  
 
   useEffect(() => {
       if(router.asPath.includes('signup')
