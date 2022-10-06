@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { LogoutButton } from '../../components/logoutButton';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -35,6 +36,7 @@ export default function Login() {
   return (
     <>
       <div className="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <LogoutButton />
         <div className="max-w-md w-full space-y-8">
           <div>
             <img

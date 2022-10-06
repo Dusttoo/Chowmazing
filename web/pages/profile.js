@@ -1,7 +1,13 @@
+import { LogoutButton } from "../components/logoutButton"
+
 const Profile = () => {
     return (
     //   <Layout>
-        <h1>Your Profile</h1>
+    <div>
+      <h1>Your Profile</h1>
+      <LogoutButton />    
+    </div>
+        
     //   </Layout>
     )
   }

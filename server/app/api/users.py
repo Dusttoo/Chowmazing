@@ -31,7 +31,19 @@ async def create_new_user(user: CreateUser, db: Session = Depends(get_db)):
     db_user = get_user_by_email(db=db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email is already registered")
-    return create_user(db=db, user=user)
+    created_user = create_user(db=db, user=user)
+    access_token_expires = timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES))
+    access_token = create_access_token(
+        data={"sub": created_user.username}, expires_delta=access_token_expires
+    )
+    return {
+        "id": created_user.id,
+        "username": created_user.username, 
+        "hashed_password": created_user.hashed_password, 
+        "email": created_user.email, 
+        "access_token": access_token, 
+        "token_type" : 'bearer'
+    }
 
 
 @user_router.get("/users/{username}", response_model=UserSchema)

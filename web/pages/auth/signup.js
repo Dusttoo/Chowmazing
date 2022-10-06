@@ -1,25 +1,13 @@
 import Head from 'next/head'
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { LogoutButton } from '../../components/logoutButton';
 
-export default function Users() {
+export default function SignUp() {
+  const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    async function fetchUsers() {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/`);
-      const json = await res.json();
-      console.log(json)
-      setUsers(json);
-    }
-    fetchUsers();
-  }, [])
-
-//   function handleChange(e) {
-//     setNote(e.target.value);
-//   }
 
   async function handleSubmit() {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/`, {
@@ -33,8 +21,13 @@ export default function Users() {
         email: email
       })
     })
-    const json = await res.json();
-    setUsers([...users, json])
+    if (res.status == 201) {
+      const json = await res.json();
+      localStorage.setItem('token', json.access_token);
+      router.push("/profile");
+    } else {
+      alert('Login failed.')
+    }
   }
 
   return (
@@ -43,6 +36,7 @@ export default function Users() {
         <title>Users</title>
       </Head>
       <div className="container mx-auto p-10 m-10">
+        <LogoutButton />
         <div className="flex flex-col">
           <h1 className="font-bold mb-3">Users</h1>
           <label>Username</label>
@@ -58,13 +52,6 @@ export default function Users() {
 
           <div className="mx-auto p-3 m-5">
             <button onClick={handleSubmit} className="bg-green-500 p-3 text-white">Submit</button>
-          </div>
-          <div>
-            <ul>
-              {users && users.map((user) =>
-                  <li key={user.id} className="bg-yellow-100 m-3 p-3 border-yellow-200 border-2">{user.username} {user.email}</li>
-              )}
-            </ul>
           </div>
         </div>
       </div>
