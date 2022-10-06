@@ -16,19 +16,19 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
 
-def get_user(username: str, password: str, db: Session = Depends(get_db)):
+def get_user(username: str, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == username).first()
     return UserSchema(id=user.id, username=user.username, hashed_password=user.hashed_password, email=user.email)
 
 def authenticate_user(username: str, password: str, db: Session = Depends(get_db)):
-    user = get_user(username=username, password=password, db=db)
+    user = get_user(username=username, db=db)
     if not user:
         return False
     if not user.verify_password(plain_password=password, hashed_password=user.hashed_password):
         return False
     return user
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None):
+def create_access_token(data: dict, expires_delta: timedelta):
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -52,7 +52,7 @@ async def get_current_user(db: Session = Depends(get_db), token: str = Depends(o
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = get_user(db, username=token_data.username)
+    user = get_user(username=token_data.username, db=db)
     if user is None:
         raise credentials_exception
     return user
