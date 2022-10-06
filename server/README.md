@@ -2,7 +2,7 @@
 Setup:
 
     python3 -m venv venv
-    . venv/bin/activate
+    pyenv activate venv 
     pip3 install -r requirements.txt
 
 Run the development server:
