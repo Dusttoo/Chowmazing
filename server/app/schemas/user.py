@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from passlib.context import CryptContext
+from typing import Optional
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -20,6 +21,8 @@ class UserSchema(BaseModel):
     username: str
     hashed_password: str
     email: str
+    access_token: Optional[str]
+    token_type: Optional[str]
 
     @classmethod
     def verify_password(self, plain_password, hashed_password):
