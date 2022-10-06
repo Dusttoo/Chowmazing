@@ -15,15 +15,15 @@ class CreateUser(BaseModel):
     class Config:
         orm_mode = True
 
-class User(BaseModel):
+class UserSchema(BaseModel):
     id: int
     username: str
     hashed_password: str
     email: str
 
     @classmethod
-    def verify_password(self, plain_password):
-        return pwd_context.verify(plain_password, self.hashed_password)
+    def verify_password(self, plain_password, hashed_password):
+        return pwd_context.verify(plain_password, hashed_password)
     
     class Config:
         orm_mode = True
@@ -34,8 +34,8 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    username: str | None = None
+    username: str 
 
 
-class UserInDB(User):
+class UserInDB(UserSchema):
     hashed_password: str

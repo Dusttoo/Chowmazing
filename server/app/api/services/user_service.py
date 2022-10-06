@@ -5,9 +5,10 @@ from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
+from app.db.db_setup import get_db
 
 from app.db.models.user import User
-from app.schemas.user import CreateUser, Token, TokenData, UserInDB
+from app.schemas.user import CreateUser, Token, TokenData, UserSchema
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -15,15 +16,15 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
 
-def get_user(db: Session, user_id: int, username: None):
-    user = db.query(User).filter(User.id == user_id).first()
-    return UserInDB(**user)
+def get_user(username: str, password: str, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.username == username).first()
+    return UserSchema(id=user.id, username=user.username, hashed_password=user.hashed_password, email=user.email)
 
-def authenticate_user(db: Session, username: str, password: str):
-    user = get_user(db, username)
+def authenticate_user(username: str, password: str, db: Session = Depends(get_db)):
+    user = get_user(username=username, password=password, db=db)
     if not user:
         return False
-    if not User.verify_password(password):
+    if not user.verify_password(plain_password=password, hashed_password=user.hashed_password):
         return False
     return user
 
@@ -37,7 +38,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-async def get_current_user(db: Session, token: str = Depends(oauth2_scheme)):
+async def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -57,15 +58,15 @@ async def get_current_user(db: Session, token: str = Depends(oauth2_scheme)):
     return user
 
 
-def get_user_by_email(db: Session, email: str):
+def get_user_by_email(email: str, db: Session = Depends(get_db)):
     return db.query(User).filter(User.email == email).first()
 
 
-def get_users(db: Session, skip: int = 0, limit: int = 100):
+def get_users(db: Session = Depends(get_db), skip: int = 0, limit: int = 100):
     return db.query(User).offset(skip).limit(limit).all()
 
 
-def create_user(db: Session, user: CreateUser):
+def create_user(user: CreateUser, db: Session = Depends(get_db)):
     password_hash = user.hash_password(user.password)
     db_user = User(
         username=user.username, hashed_password=password_hash, email=user.email
