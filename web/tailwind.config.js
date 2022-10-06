@@ -22,7 +22,7 @@ module.exports = {
       tan: '#ffefe1',
       main: {
         1: '#A90029',
-        2: '#BF0000'
+        2: '#00b2ff'
       },
       gray: {
         50: '#F2F5FA',

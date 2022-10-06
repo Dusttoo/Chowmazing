@@ -10,7 +10,7 @@ export default function SignUp() {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
 
-  async function handleSubmit() {
+  async function handleSubmit(e) {
     e.preventDefault();
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/`, {
       method: 'POST',
@@ -37,8 +37,7 @@ export default function SignUp() {
       <Head>
         <title>Sign Up</title>
       </Head>
-      <div className="h-full flex-col items-center justify-center py-16 px-8 sm:px-6 lg:px-8 bg-main-1">
-        <LogoutButton />
+      <div className="mx-auto object-center w-screen h-screen flex flex-col items-center justify-center py-16 px-8 sm:px-6 lg:px-8 bg-main-1">
         <Image 
         src='https://top-notch.s3.us-east-2.amazonaws.com/ChowMazing+(2).png' 
         width='250px'
@@ -47,7 +46,7 @@ export default function SignUp() {
         />
         <div className="max-w-md w-full space-y-8">
           <div>
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-white">Sign in to your account</h2>
+            <h2 className="mt-6 text-center text-3xl font-extrabold text-white">Sign up for a new account</h2>
           </div>
           <form className="mt-8 space-y-6" action="/" method="POST" onSubmit={handleSubmit}>
             <input type="hidden" name="remember" defaultValue="true" />
@@ -69,7 +68,7 @@ export default function SignUp() {
                 />
               </div>
               <div>
-                <label htmlFor="username" className="sr-only">
+                <label htmlFor="email" className="sr-only">
                   Email
                 </label>
                 <input
@@ -103,7 +102,7 @@ export default function SignUp() {
             </div>
 
             <div className="text-sm">
-                <a href="/auth/login" className="font-medium text-white hover:text-indigo-500">
+                <a href="/auth/login" className="font-medium text-white hover:text-main-2">
                   Have an account? Sign in.
                 </a>
               </div>

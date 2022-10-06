@@ -28,15 +28,14 @@ export default function Login() {
     if (res.status == 200) {
       const json = await res.json();
       localStorage.setItem('token', json.access_token);
-      router.push("admin");
+      router.push("/profile");
     } else {
       alert('Login failed.')
     }
   }
 
   return (
-      <div className="h-full flex-col items-center justify-center py-16 px-8 sm:px-6 lg:px-8 bg-main-1">
-      <LogoutButton />
+      <div className="mx-auto object-center w-screen h-screen flex flex-col items-center justify-center py-16 px-8 sm:px-6 lg:px-8 bg-main-1">
         <Image 
         src='https://top-notch.s3.us-east-2.amazonaws.com/ChowMazing+(2).png' 
         width='250px'
@@ -98,13 +97,13 @@ export default function Login() {
               </div>
 
               <div className="text-sm">
-                <a href="#" className="font-medium text-white hover:text-indigo-500">
+                <a href="#" className="font-medium text-white hover:text-main-2">
                   Forgot your password?
                 </a>
               </div>
             </div>
             <div className="text-sm">
-                <a href="/auth/signup" className="font-medium text-white hover:text-indigo-500">
+                <a href="/auth/signup" className="font-medium text-white hover:text-main-2">
                   No account? Sign up.
                 </a>
               </div>
