@@ -1,8 +1,8 @@
 import os
 from datetime import datetime, timedelta
-from typing import Optional
-from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from sqlalchemy.exc import IntegrityError
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 from app.db.db_setup import get_db
@@ -80,6 +80,7 @@ async def get_current_user(db: Session = Depends(get_db), token: str = Depends(o
 
 
 def get_user_by_email(email: str, db: Session = Depends(get_db)):
+    print('in get_user_by_email: ', db.query(User).filter(User.email == email).one_or_none())
     return db.query(User).filter(User.email == email).first()
 
 
@@ -88,28 +89,31 @@ def get_users(db: Session = Depends(get_db), skip: int = 0, limit: int = 100):
 
 
 def create_user(user: CreateUser, db: Session = Depends(get_db)):
-    password_hash = user.hash_password(user.password)
-    address = Address(
-        street1=user.address.street1,
-        street2=user.address.street2,
-        city=user.address.city,
-        state=user.address.state,
-        zip=user.address.zip
-    )
-    db.add(address)
-    db.flush()
-    db_user = User(
-        username=user.username, 
-        hashed_password=password_hash, 
-        email=user.email,
-        first_name=user.first_name,
-        last_name=user.last_name,
-        birthdate=user.birthdate,
-        address_id=address.id
+    try:
+        password_hash = user.hash_password(user.password)
+        address = Address(
+            street1=user.address.street1,
+            street2=user.address.street2,
+            city=user.address.city,
+            state=user.address.state,
+            zip=user.address.zip
         )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
+        db.add(address)
+        db.flush()
+        db_user = User(
+            username=user.username, 
+            hashed_password=password_hash, 
+            email=user.email,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            birthdate=user.birthdate,
+            address_id=address.id
+            )
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+    except IntegrityError as e:
+        raise HTTPException(status_code=404, detail=e)
     return {
         'id': db_user.id,
         'username': db_user.username, 

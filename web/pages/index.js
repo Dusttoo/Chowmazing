@@ -1,7 +1,5 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import { LoginButton } from '../components/loginButton'
-import { LogoutButton } from '../components/logoutButton'
 import { useRouter } from 'next/router'
 
 
@@ -25,7 +23,7 @@ export default function Home() {
   }, [])
   console.log(router.asPath, "path")
   return (
-    <div className="mx-auto p-10 m-10">
+    <div className="mx-auto p-10">
       <Head>
         <title>Chowmazing</title>
         <meta name="Chowmazing" content="It's what's for dinner" />
@@ -33,7 +31,6 @@ export default function Home() {
       </Head>
 
       <main className="mx-auto p-10 m-10">
-      {!user ? <LoginButton /> : <LogoutButton/>}
         <h1 className="p-4">
           Welcome to Chowmazing!!
         </h1>

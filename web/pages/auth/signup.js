@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import Image from 'next/image';
+import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 
@@ -56,45 +57,31 @@ export default function SignUp() {
       }
     })
     })
+    const json = await res.json();
     if (res.status == 201 || res.status == 200) {
-      const json = await res.json();
       localStorage.setItem('token', json.access_token);
       router.push("/profile");
     } else {
-      alert('Sign Up failed.')
+      console.log(json)
+      alert(json.detail)
     }
   }
-
-//   {
-//     'id': db_user.id,
-//     'username': db_user.username, 
-//     'hashed_password': password_hash, 
-//     'email': db_user.email,
-//     'first_name': db_user.first_name,
-//     'last_name': db_user.last_name,
-//     'birthdate': db_user.birthdate,
-//     'address': {
-//         'id': address.id,
-//         'street1': address.street1,
-//         'street2': address.street2,
-//         'city': address.city,
-//         'state': address.state,
-//         'zip': address.zip
-//     }
-// }
 
   return (
     <div>
       <Head>
         <title>Sign Up</title>
       </Head>
-      <div className="mx-auto object-center w-screen h-screen flex flex-col items-center justify-center py-16 px-8 sm:px-6 lg:px-8 bg-main-1">
-        <Image 
-        src='https://top-notch.s3.us-east-2.amazonaws.com/ChowMazing+(2).png' 
-        width='250px'
-        height='250px'
-
-        />
+      <div className="w-full h-full justify-center py-16 px-8 sm:px-6 lg:px-8 bg-main-1">
+        <div className='w-full h-full mx-auto object-center flex flex-col items-center'>
+        <Link href='/'>
+          <a>
+              <Image 
+              src='https://chowmazing.s3.us-east-2.amazonaws.com/ChowMazing+(4).png' 
+              width='300px'
+              height='300px'/>
+          </a>
+          </Link>
         <div className="max-w-md w-full space-y-8">
           <div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-white">Sign up for a new account</h2>
@@ -299,6 +286,7 @@ export default function SignUp() {
             </div>
           </form>
       </div>
+    </div>
     </div>
     </div>
   )

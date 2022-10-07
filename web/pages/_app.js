@@ -41,7 +41,7 @@ function MyApp({ Component, pageProps }) {
     <UserContext.Provider value={user}>
       {router.asPath.includes('signup') ? <Component {...pageProps} /> : 
       router.asPath.includes('login') ? <Component {...pageProps} /> : 
-      <Layout>
+      <Layout user={user}>
         <Component {...pageProps} user={user}/>
       </Layout>
       }

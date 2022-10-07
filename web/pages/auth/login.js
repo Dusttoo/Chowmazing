@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { LogoutButton } from '../../components/logoutButton';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -40,12 +40,14 @@ export default function Login() {
 
   return (
       <div className="mx-auto object-center w-screen h-screen flex flex-col items-center justify-center py-16 px-8 sm:px-6 lg:px-8 bg-main-1">
-        <Image 
-        src='https://top-notch.s3.us-east-2.amazonaws.com/ChowMazing+(2).png' 
-        width='250px'
-        height='250px'
-
-        />
+        <Link href='/'>
+            <a>
+                <Image 
+                src='https://chowmazing.s3.us-east-2.amazonaws.com/ChowMazing+(4).png' 
+                width='300px'
+                height='300px'/>
+            </a>
+          </Link>
         <div className="max-w-md w-full space-y-8">
           <div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-white">Sign in to your account</h2>
