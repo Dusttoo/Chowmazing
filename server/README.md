@@ -11,3 +11,7 @@ Run the development server:
 
 When adding new packages:
     pip3 freeze > requirements.txt
+
+Creating migration file:
+    alembic revision --autogenerate -m "added address table"
+    alembic upgrade head

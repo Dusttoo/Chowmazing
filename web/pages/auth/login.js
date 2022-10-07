@@ -6,8 +6,9 @@ import Image from 'next/image';
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState('')
   const router = useRouter();
-
+  console.log(username, password, errors)
   function handleUsernameChange(e) {
     setUsername(e.target.value);
   }
@@ -21,15 +22,18 @@ export default function Login() {
     const formData = new FormData();
     formData.append('username', username);
     formData.append('password', password);
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/token`, {
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/token`, {
       method: 'POST',
       body: formData
     });
+    console.log('response', res)
     if (res.status == 200) {
       const json = await res.json();
       localStorage.setItem('token', json.access_token);
       router.push("/profile");
     } else {
+      setErrors(res)
       alert('Login failed.')
     }
   }
@@ -50,6 +54,7 @@ export default function Login() {
             <input type="hidden" name="remember" defaultValue="true" />
             <div className="rounded-md shadow-sm -space-y-px">
               <div>
+                <p>{errors && errors}</p>
                 <label htmlFor="username" className="sr-only">
                   Username
                 </label>

@@ -9,9 +9,8 @@ from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from app.db.db_setup import get_db
-from app.schemas.user import CreateUser, UserSchema
+from app.schemas.user import CreateUser, UserSchema, CreateUser, Token
 from app.api.services.user_service import get_user, get_user_by_email, get_users, create_user, authenticate_user, create_access_token, get_current_user
-from app.schemas.user import CreateUser, Token, TokenData, UserInDB
 
 
 user_router = fastapi.APIRouter()
@@ -20,13 +19,13 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
 
-@user_router.get("/users", response_model=List[UserSchema])
+@user_router.get("/", response_model=List[UserSchema])
 async def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = get_users(db, skip=skip, limit=limit)
     return users
 
 
-@user_router.post("/users", response_model=UserSchema, status_code=201)
+@user_router.post("/", response_model=UserSchema, status_code=201)
 async def create_new_user(user: CreateUser, db: Session = Depends(get_db)):
     db_user = get_user_by_email(db=db, email=user.email)
     if db_user:
@@ -41,12 +40,16 @@ async def create_new_user(user: CreateUser, db: Session = Depends(get_db)):
         "username": created_user.username, 
         "hashed_password": created_user.hashed_password, 
         "email": created_user.email, 
+        "first_name": created_user.first_name,
+        "last_name": created_user.last_name,
+        "birthdate": str(created_user.birthdate),
         "access_token": access_token, 
-        "token_type" : 'bearer'
+        "token_type" : 'bearer',
+        "address_id": created_user.address_id
     }
 
 
-@user_router.get("/users/{username}", response_model=UserSchema)
+@user_router.get("/{username}", response_model=UserSchema)
 async def read_user(username: str, db: Session = Depends(get_db)):
     db_user = get_user(db, username)
     if db_user is None:
@@ -69,6 +72,6 @@ async def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@user_router.get("/users/me/", response_model=UserSchema)
+@user_router.get("/me/", response_model=UserSchema)
 async def read_users_me(current_user: UserSchema = Depends(get_current_user)):
     return current_user

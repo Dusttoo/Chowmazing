@@ -11,6 +11,7 @@ from fastapi_pagination import add_pagination
 
 from app.db.db_setup import Base, engine
 from app.api.users import user_router
+from app.api.address import address_router
 
 load_dotenv()
 
@@ -48,5 +49,6 @@ app.add_middleware(
 def read_root():
     return {"Hello": "World"}
 
-app.include_router(user_router)
+app.include_router(user_router, prefix="/users")
+app.include_router(address_router, prefix='/address')
 add_pagination(app)

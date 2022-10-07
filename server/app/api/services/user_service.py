@@ -8,7 +8,9 @@ from sqlalchemy.orm import Session
 from app.db.db_setup import get_db
 
 from app.db.models.user import User
+from app.db.models.address import Address
 from app.schemas.user import CreateUser, Token, TokenData, UserSchema
+from app.schemas.address import AddressSchema
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -18,7 +20,26 @@ ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
 
 def get_user(username: str, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == username).first()
-    return UserSchema(id=user.id, username=user.username, hashed_password=user.hashed_password, email=user.email)
+    if not user:
+        return False
+    address = db.query(Address).filter(User.address_id == user.address_id).one()
+    return UserSchema(
+        id=user.id, 
+        username=user.username, 
+        hashed_password=user.hashed_password, 
+        email=user.email,
+        first_name=user.first_name,
+        last_name=user.last_name,
+        birthdate=str(user.birthdate),
+        address=AddressSchema(
+            id=address.id,
+            street1=address.street1,
+            street2=address.street2,
+            city=address.city,
+            state=address.state,
+            zip=address.zip
+        )
+        )
 
 def authenticate_user(username: str, password: str, db: Session = Depends(get_db)):
     user = get_user(username=username, db=db)
@@ -69,7 +90,13 @@ def get_users(db: Session = Depends(get_db), skip: int = 0, limit: int = 100):
 def create_user(user: CreateUser, db: Session = Depends(get_db)):
     password_hash = user.hash_password(user.password)
     db_user = User(
-        username=user.username, hashed_password=password_hash, email=user.email
+        username=user.username, 
+        hashed_password=password_hash, 
+        email=user.email,
+        first_name=user.first_name,
+        last_name=user.last_name,
+        birthdate=user.birthdate,
+        address_id=user.address_id
         )
     db.add(db_user)
     db.commit()
