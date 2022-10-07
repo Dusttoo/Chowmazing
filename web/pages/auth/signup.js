@@ -1,8 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { LogoutButton } from '../../components/logoutButton';
 
 export default function SignUp() {
   const router = useRouter();
@@ -118,23 +117,6 @@ export default function SignUp() {
               </button>
             </div>
           </form>
-        {/* <div className="flex flex-col">
-          <h1 className="font-bold mb-3">Users</h1>
-          <label>Username</label>
-          <input 
-          onChange={(e) => setUsername(e.target.value)}/>
-           <label>Email</label>
-          <input 
-          onChange={(e) => setEmail(e.target.value)}/>
-          <label>Password</label>
-          <input 
-          onChange={(e) => setPassword(e.target.value)}/>
-         
-
-          <div className="mx-auto p-3 m-5">
-            <button onClick={handleSubmit} className="bg-green-500 p-3 text-white">Submit</button>
-          </div>
-        </div> */}
       </div>
     </div>
     </div>

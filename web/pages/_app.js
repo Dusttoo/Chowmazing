@@ -2,6 +2,7 @@ import 'tailwindcss/tailwind.css'
 import { UserContext } from '../components/user'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router';
+import Layout from '../components/layout';
 
 
 
@@ -12,7 +13,7 @@ function MyApp({ Component, pageProps }) {
   useEffect(() => {
       if(router.asPath.includes('signup')
       || router.asPath.includes('login')
-      || router.asPath.includes('home')) {
+      || router.asPath === '/') {
         return
       }
       const token = localStorage.getItem('token');
@@ -30,7 +31,7 @@ function MyApp({ Component, pageProps }) {
         }
       }
       fetchUser()
-  }, [])
+  }, [router.asPath])
 
   if (pageProps.protected && !user) {
     return <h1>Loading...</h1>
@@ -38,7 +39,13 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <UserContext.Provider value={user}>
-      <Component {...pageProps} />
+      {router.asPath.includes('signup') ? <Component {...pageProps} /> : 
+      router.asPath.includes('login') ? <Component {...pageProps} /> : 
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+      }
+      
     </UserContext.Provider>
   )
 }

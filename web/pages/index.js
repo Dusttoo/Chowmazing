@@ -2,10 +2,11 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { LoginButton } from '../components/loginButton'
 import { LogoutButton } from '../components/logoutButton'
-import { useUser } from '../components/user'
+import { useRouter } from 'next/router'
 
 
 export default function Home() {
+  const router = useRouter();
   const [user, setUser] = useState(null)
   useEffect(()=> {
     const token = localStorage.getItem('token');
@@ -22,6 +23,7 @@ export default function Home() {
       }
       fetchUser()
   }, [])
+  console.log(router.asPath, "path")
   return (
     <div className="mx-auto p-10 m-10">
       <Head>

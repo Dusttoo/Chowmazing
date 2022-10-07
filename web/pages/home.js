@@ -2,8 +2,6 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { LoginButton } from '../components/loginButton'
 import { LogoutButton } from '../components/logoutButton'
-import { useUser } from '../components/user'
-
 
 export default function Home() {
   const [user, setUser] = useState(null)
