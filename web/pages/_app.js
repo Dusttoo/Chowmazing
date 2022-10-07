@@ -11,11 +11,6 @@ function MyApp({ Component, pageProps }) {
   const router = useRouter();
 
   useEffect(() => {
-      if(router.asPath.includes('signup')
-      || router.asPath.includes('login')
-      || router.asPath === '/') {
-        return
-      }
       const token = localStorage.getItem('token');
       async function fetchUser() {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me/`, {
@@ -27,6 +22,11 @@ function MyApp({ Component, pageProps }) {
           const json = await res.json();
           setUser(json);
         } else {
+          if(router.asPath.includes('signup')
+            || router.asPath.includes('login')
+            || router.asPath === '/') {
+              return
+            }
           router.push('auth/login');
         }
       }
@@ -36,13 +36,13 @@ function MyApp({ Component, pageProps }) {
   if (pageProps.protected && !user) {
     return <h1>Loading...</h1>
   }
-
+  console.log(user)
   return (
     <UserContext.Provider value={user}>
       {router.asPath.includes('signup') ? <Component {...pageProps} /> : 
       router.asPath.includes('login') ? <Component {...pageProps} /> : 
       <Layout>
-        <Component {...pageProps} />
+        <Component {...pageProps} user={user}/>
       </Layout>
       }
       

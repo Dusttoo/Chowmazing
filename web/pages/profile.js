@@ -1,25 +1,9 @@
 import { LogoutButton } from "../components/logoutButton"
 import { useState, useEffect } from "react"
 
-const Profile = () => {
-  const [user, setUser] = useState(null)
-
-  useEffect(()=> {
-    const token = localStorage.getItem('token');
-      async function fetchUser() {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me/`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        if (res.status == 200 || res.status == 201) {
-          const json = await res.json();
-          setUser(json);
-        }
-      }
-      fetchUser()
-  }, [])
+const Profile = ({user}) => {
   console.log(user)
+  if(!user) return
     return (
     <div>
       <div className="mx-auto object-center w-screen h-screen flex flex-col items-center py-16 px-8 sm:px-6 lg:px-8">
