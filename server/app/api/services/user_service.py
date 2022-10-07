@@ -22,7 +22,7 @@ def get_user(username: str, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == username).first()
     if not user:
         return False
-    address = db.query(Address).filter(User.address_id == user.address_id).one()
+    address = db.query(Address).filter(Address.id == user.address_id).one()
     return UserSchema(
         id=user.id, 
         username=user.username, 
@@ -89,6 +89,15 @@ def get_users(db: Session = Depends(get_db), skip: int = 0, limit: int = 100):
 
 def create_user(user: CreateUser, db: Session = Depends(get_db)):
     password_hash = user.hash_password(user.password)
+    address = Address(
+        street1=user.address.street1,
+        street2=user.address.street2,
+        city=user.address.city,
+        state=user.address.state,
+        zip=user.address.zip
+    )
+    db.add(address)
+    db.flush()
     db_user = User(
         username=user.username, 
         hashed_password=password_hash, 
@@ -96,9 +105,25 @@ def create_user(user: CreateUser, db: Session = Depends(get_db)):
         first_name=user.first_name,
         last_name=user.last_name,
         birthdate=user.birthdate,
-        address_id=user.address_id
+        address_id=address.id
         )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return db_user
+    return {
+        'id': db_user.id,
+        'username': db_user.username, 
+        'hashed_password': password_hash, 
+        'email': db_user.email,
+        'first_name': db_user.first_name,
+        'last_name': db_user.last_name,
+        'birthdate': db_user.birthdate,
+        'address': {
+            'id': address.id,
+            'street1': address.street1,
+            'street2': address.street2,
+            'city': address.city,
+            'state': address.state,
+            'zip': address.zip
+        }
+    }

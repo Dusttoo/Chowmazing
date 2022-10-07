@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from passlib.context import CryptContext
 from typing import Optional
-from app.schemas.address import AddressSchema
+from app.schemas.address import AddressSchema, CreateAddress
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -12,7 +12,7 @@ class CreateUser(BaseModel):
     first_name: str
     last_name: str
     birthdate: str
-    address: AddressSchema
+    address: CreateAddress
     
 
     @classmethod

@@ -27,25 +27,26 @@ async def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_
 
 @user_router.post("/", response_model=UserSchema, status_code=201)
 async def create_new_user(user: CreateUser, db: Session = Depends(get_db)):
+    print(user)
     db_user = get_user_by_email(db=db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email is already registered")
     created_user = create_user(db=db, user=user)
     access_token_expires = timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES))
     access_token = create_access_token(
-        data={"sub": created_user.username}, expires_delta=access_token_expires
+        data={"sub": created_user["username"]}, expires_delta=access_token_expires
     )
     return {
-        "id": created_user.id,
-        "username": created_user.username, 
-        "hashed_password": created_user.hashed_password, 
-        "email": created_user.email, 
-        "first_name": created_user.first_name,
-        "last_name": created_user.last_name,
-        "birthdate": str(created_user.birthdate),
+        "id": created_user['id'],
+        "username": created_user['username'], 
+        "hashed_password": created_user['hashed_password'], 
+        "email": created_user['email'], 
+        "first_name": created_user['first_name'],
+        "last_name": created_user['last_name'],
+        "birthdate": str(created_user['birthdate']),
         "access_token": access_token, 
         "token_type" : 'bearer',
-        "address_id": created_user.address_id
+        "address": created_user['address']
     }
 
 
