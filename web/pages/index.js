@@ -1,11 +1,10 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import { LoginButton } from '../components/loginButton'
-import { LogoutButton } from '../components/logoutButton'
-import { useUser } from '../components/user'
-
+import { useRouter } from 'next/router'
+import GoogleMapComponent from '../components/googleMap';
 
 export default function Home() {
+  const router = useRouter();
   const [user, setUser] = useState(null)
   useEffect(()=> {
     const token = localStorage.getItem('token');
@@ -23,7 +22,7 @@ export default function Home() {
       fetchUser()
   }, [])
   return (
-    <div className="mx-auto p-10 m-10">
+    <div className="mx-auto p-10">
       <Head>
         <title>Chowmazing</title>
         <meta name="Chowmazing" content="It's what's for dinner" />
@@ -31,11 +30,16 @@ export default function Home() {
       </Head>
 
       <main className="mx-auto p-10 m-10">
-      {!user ? <LoginButton /> : <LogoutButton/>}
         <h1 className="p-4">
           Welcome to Chowmazing!!
         </h1>
-
+        {/* <GoogleMapComponent
+        googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAfQCYiN0lDTEYO7_c9qhqjMTYyfmgnNZM"
+        loadingElement={<div className="h-full" />}
+        containerElement={
+          <div className="relative w-full rounded h-600-px" />
+        }
+        mapElement={<div className="rounded h-full" />} /> */}
       </main>
     </div>
   )

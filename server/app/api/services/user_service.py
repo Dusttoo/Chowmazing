@@ -1,14 +1,16 @@
 import os
 from datetime import datetime, timedelta
-from typing import Optional
-from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from sqlalchemy.exc import IntegrityError
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 from app.db.db_setup import get_db
 
 from app.db.models.user import User
+from app.db.models.address import Address
 from app.schemas.user import CreateUser, Token, TokenData, UserSchema
+from app.schemas.address import AddressSchema
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -18,7 +20,26 @@ ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
 
 def get_user(username: str, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == username).first()
-    return UserSchema(id=user.id, username=user.username, hashed_password=user.hashed_password, email=user.email)
+    if not user:
+        return False
+    address = db.query(Address).filter(Address.id == user.address_id).one()
+    return UserSchema(
+        id=user.id, 
+        username=user.username, 
+        hashed_password=user.hashed_password, 
+        email=user.email,
+        first_name=user.first_name,
+        last_name=user.last_name,
+        birthdate=str(user.birthdate),
+        address=AddressSchema(
+            id=address.id,
+            street1=address.street1,
+            street2=address.street2,
+            city=address.city,
+            state=address.state,
+            zip=address.zip
+        )
+        )
 
 def authenticate_user(username: str, password: str, db: Session = Depends(get_db)):
     user = get_user(username=username, db=db)
@@ -59,6 +80,7 @@ async def get_current_user(db: Session = Depends(get_db), token: str = Depends(o
 
 
 def get_user_by_email(email: str, db: Session = Depends(get_db)):
+    print('in get_user_by_email: ', db.query(User).filter(User.email == email).one_or_none())
     return db.query(User).filter(User.email == email).first()
 
 
@@ -67,11 +89,45 @@ def get_users(db: Session = Depends(get_db), skip: int = 0, limit: int = 100):
 
 
 def create_user(user: CreateUser, db: Session = Depends(get_db)):
-    password_hash = user.hash_password(user.password)
-    db_user = User(
-        username=user.username, hashed_password=password_hash, email=user.email
+    try:
+        password_hash = user.hash_password(user.password)
+        address = Address(
+            street1=user.address.street1,
+            street2=user.address.street2,
+            city=user.address.city,
+            state=user.address.state,
+            zip=user.address.zip
         )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+        db.add(address)
+        db.flush()
+        db_user = User(
+            username=user.username, 
+            hashed_password=password_hash, 
+            email=user.email,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            birthdate=user.birthdate,
+            address_id=address.id
+            )
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+    except IntegrityError as e:
+        raise HTTPException(status_code=404, detail=e)
+    return {
+        'id': db_user.id,
+        'username': db_user.username, 
+        'hashed_password': password_hash, 
+        'email': db_user.email,
+        'first_name': db_user.first_name,
+        'last_name': db_user.last_name,
+        'birthdate': db_user.birthdate,
+        'address': {
+            'id': address.id,
+            'street1': address.street1,
+            'street2': address.street2,
+            'city': address.city,
+            'state': address.state,
+            'zip': address.zip
+        }
+    }

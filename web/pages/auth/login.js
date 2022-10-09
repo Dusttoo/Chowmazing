@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { LogoutButton } from '../../components/logoutButton';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState('')
   const router = useRouter();
-
   function handleUsernameChange(e) {
     setUsername(e.target.value);
   }
@@ -21,7 +21,8 @@ export default function Login() {
     const formData = new FormData();
     formData.append('username', username);
     formData.append('password', password);
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/token`, {
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/token`, {
       method: 'POST',
       body: formData
     });
@@ -30,18 +31,21 @@ export default function Login() {
       localStorage.setItem('token', json.access_token);
       router.push("/profile");
     } else {
+      setErrors(res)
       alert('Login failed.')
     }
   }
 
   return (
       <div className="mx-auto object-center w-screen h-screen flex flex-col items-center justify-center py-16 px-8 sm:px-6 lg:px-8 bg-main-1">
-        <Image 
-        src='https://top-notch.s3.us-east-2.amazonaws.com/ChowMazing+(2).png' 
-        width='250px'
-        height='250px'
-
-        />
+        <Link href='/'>
+            <a>
+                <Image 
+                src='https://chowmazing.s3.us-east-2.amazonaws.com/ChowMazing+(4).png' 
+                width='300px'
+                height='300px'/>
+            </a>
+          </Link>
         <div className="max-w-md w-full space-y-8">
           <div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-white">Sign in to your account</h2>
@@ -50,6 +54,7 @@ export default function Login() {
             <input type="hidden" name="remember" defaultValue="true" />
             <div className="rounded-md shadow-sm -space-y-px">
               <div>
+                <p>{errors && errors}</p>
                 <label htmlFor="username" className="sr-only">
                   Username
                 </label>

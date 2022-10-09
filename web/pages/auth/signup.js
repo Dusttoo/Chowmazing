@@ -1,14 +1,22 @@
 import Head from 'next/head'
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { LogoutButton } from '../../components/logoutButton';
 
 export default function SignUp() {
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [birthdate, setBirthdate] = useState('');
+  const [street1, setStreet1] = useState('');
+  const [street2, setStreet2] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [zip, setZip] = useState('');
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -20,15 +28,25 @@ export default function SignUp() {
       body: JSON.stringify({
         username: username,
         password: password,
-        email: email
-      })
+        email: email,
+        first_name: firstName,
+        last_name: lastName,
+        birthdate: birthdate,
+        address: {
+            street1: street1,
+            street2: street2,
+            city: city,
+            state: state,
+            zip: zip,
+      }
     })
+    })
+    const json = await res.json();
     if (res.status == 201 || res.status == 200) {
-      const json = await res.json();
       localStorage.setItem('token', json.access_token);
       router.push("/profile");
     } else {
-      alert('Login failed.')
+      alert(json.detail)
     }
   }
 
@@ -37,13 +55,16 @@ export default function SignUp() {
       <Head>
         <title>Sign Up</title>
       </Head>
-      <div className="mx-auto object-center w-screen h-screen flex flex-col items-center justify-center py-16 px-8 sm:px-6 lg:px-8 bg-main-1">
-        <Image 
-        src='https://top-notch.s3.us-east-2.amazonaws.com/ChowMazing+(2).png' 
-        width='250px'
-        height='250px'
-
-        />
+      <div className="w-full h-full justify-center py-16 px-8 sm:px-6 lg:px-8 bg-main-1">
+        <div className='w-full h-full mx-auto object-center flex flex-col items-center'>
+        <Link href='/'>
+          <a>
+              <Image 
+              src='https://chowmazing.s3.us-east-2.amazonaws.com/ChowMazing+(4).png' 
+              width='300px'
+              height='300px'/>
+          </a>
+          </Link>
         <div className="max-w-md w-full space-y-8">
           <div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-white">Sign up for a new account</h2>
@@ -61,7 +82,7 @@ export default function SignUp() {
                   type="text"
                   autoComplete="username"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 my-1 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                   placeholder="Username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -77,11 +98,140 @@ export default function SignUp() {
                   type="text"
                   autoComplete="email"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 my-1 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                   placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
+              </div>
+              <div>
+                <label htmlFor="firstName" className="sr-only">
+                  First Name
+                </label>
+                <input
+                  id="firstName"
+                  name="firstName"
+                  type="text"
+                  autoComplete="firstName"
+                  required
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 my-1 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  placeholder="First Name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="lastName" className="sr-only">
+                  Last Name
+                </label>
+                <input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  autoComplete="lastName"
+                  required
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 my-1 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  placeholder="Last Name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="birthdate" className="sr-only">
+                  birthdate
+                </label>
+                <input
+                  id="birthdate"
+                  name="birthdate"
+                  type="date"
+                  autoComplete="birthdate"
+                  required
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 my-1 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  placeholder="birthdate"
+                  value={birthdate}
+                  onChange={(e) => setBirthdate(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="street1" className="sr-only">
+                  Street Address
+                </label>
+                <input
+                  id="street1"
+                  name="street1"
+                  type="text"
+                  autoComplete="street1"
+                  required
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 my-1 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  placeholder="Street Address"
+                  value={street1}
+                  onChange={(e) => setStreet1(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="street2" className="sr-only">
+                  Street Address 2
+                </label>
+                <input
+                  id="street2"
+                  name="street2"
+                  type="text"
+                  autoComplete="street2"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 my-1 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  placeholder="Street Address 2 (optional)"
+                  value={street2}
+                  onChange={(e) => setStreet2(e.target.value)}
+                />
+              </div>
+              <div className='flex justify-center'>
+                <div>
+                  <label htmlFor="city" className="sr-only">
+                  City
+                  </label>
+                  <input
+                    id="city"
+                    name="city"
+                    type="text"
+                    autoComplete="city"
+                    required
+                    className="appearance-none rounded-none w-full px-2 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                    placeholder="City"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="state" className="sr-only">
+                    State
+                  </label>
+                  <input
+                    id="state"
+                    name="state"
+                    type="text"
+                    autoComplete="state"
+                    required
+                    className="appearance-none rounded-none w-full px-2 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                    placeholder="State"
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="zip" className="sr-only">
+                    Zip
+                  </label>
+                  <input
+                    id="zip"
+                    name="zip"
+                    type="text"
+                    autoComplete="zip"
+                    required
+                    className="appearance-none rounded-none w-full px-2 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                    placeholder="Zip"
+                    value={zip}
+                    onChange={(e) => setZip(e.target.value)}
+                  />
+                </div>
               </div>
               <div>
                 <label htmlFor="password" className="sr-only">
@@ -93,7 +243,7 @@ export default function SignUp() {
                   type="password"
                   autoComplete="current-password"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 my-1 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -118,24 +268,8 @@ export default function SignUp() {
               </button>
             </div>
           </form>
-        {/* <div className="flex flex-col">
-          <h1 className="font-bold mb-3">Users</h1>
-          <label>Username</label>
-          <input 
-          onChange={(e) => setUsername(e.target.value)}/>
-           <label>Email</label>
-          <input 
-          onChange={(e) => setEmail(e.target.value)}/>
-          <label>Password</label>
-          <input 
-          onChange={(e) => setPassword(e.target.value)}/>
-         
-
-          <div className="mx-auto p-3 m-5">
-            <button onClick={handleSubmit} className="bg-green-500 p-3 text-white">Submit</button>
-          </div>
-        </div> */}
       </div>
+    </div>
     </div>
     </div>
   )
