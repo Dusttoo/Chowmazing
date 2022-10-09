@@ -18,22 +18,6 @@ export default function SignUp() {
   const [state, setState] = useState('');
   const [zip, setZip] = useState('');
 
-  console.log(birthdate)
-  console.log({
-    username: username,
-    password: password,
-    email: email,
-    first_name: firstName,
-    last_name: lastName,
-    birthdate: new Date(birthdate),
-    address: {
-        street1: street1,
-        street2: street2,
-        city: city,
-        state: state,
-        zip: zip,
-  }
-})
   async function handleSubmit(e) {
     e.preventDefault();
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/`, {
@@ -62,7 +46,6 @@ export default function SignUp() {
       localStorage.setItem('token', json.access_token);
       router.push("/profile");
     } else {
-      console.log(json)
       alert(json.detail)
     }
   }

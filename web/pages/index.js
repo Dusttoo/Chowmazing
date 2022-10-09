@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-
+import GoogleMapComponent from '../components/googleMap';
 
 export default function Home() {
   const router = useRouter();
@@ -21,7 +21,6 @@ export default function Home() {
       }
       fetchUser()
   }, [])
-  console.log(router.asPath, "path")
   return (
     <div className="mx-auto p-10">
       <Head>
@@ -34,7 +33,13 @@ export default function Home() {
         <h1 className="p-4">
           Welcome to Chowmazing!!
         </h1>
-
+        {/* <GoogleMapComponent
+        googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAfQCYiN0lDTEYO7_c9qhqjMTYyfmgnNZM"
+        loadingElement={<div className="h-full" />}
+        containerElement={
+          <div className="relative w-full rounded h-600-px" />
+        }
+        mapElement={<div className="rounded h-full" />} /> */}
       </main>
     </div>
   )

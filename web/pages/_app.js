@@ -36,7 +36,6 @@ function MyApp({ Component, pageProps }) {
   if (pageProps.protected && !user) {
     return <h1>Loading...</h1>
   }
-  console.log(user)
   return (
     <UserContext.Provider value={user}>
       {router.asPath.includes('signup') ? <Component {...pageProps} /> : 

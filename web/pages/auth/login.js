@@ -8,7 +8,6 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState('')
   const router = useRouter();
-  console.log(username, password, errors)
   function handleUsernameChange(e) {
     setUsername(e.target.value);
   }
@@ -27,7 +26,6 @@ export default function Login() {
       method: 'POST',
       body: formData
     });
-    console.log('response', res)
     if (res.status == 200) {
       const json = await res.json();
       localStorage.setItem('token', json.access_token);
