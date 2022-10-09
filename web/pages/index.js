@@ -34,7 +34,7 @@ export default function Home() {
           Welcome to Chowmazing!!
         </h1>
         {/* <GoogleMapComponent
-        googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAfQCYiN0lDTEYO7_c9qhqjMTYyfmgnNZM"
+        googleMapURL=`https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_API_KEY}`
         loadingElement={<div className="h-full" />}
         containerElement={
           <div className="relative w-full rounded h-600-px" />
