@@ -12,6 +12,7 @@ from fastapi_pagination import add_pagination
 from app.db.db_setup import Base, engine
 from app.api.users import user_router
 from app.api.address import address_router
+from app.api.recipes import recipe_router
 
 load_dotenv()
 
@@ -51,4 +52,5 @@ def read_root():
 
 app.include_router(user_router, prefix="/users")
 app.include_router(address_router, prefix='/address')
+app.include_router(recipe_router, prefix='/recipes')
 add_pagination(app)
