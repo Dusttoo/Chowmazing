@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { RecipeResults } from './recipeResults';
 
 export const IngredientQuestions = ({user}) => {
     const [questionNumber, setQuestionNumber] = useState(1)
-    const [answers, setAnswers] = useState()
+    const [answers, setAnswers] = useState([])
     const router = useRouter()
     const handleNext = () => {
         setQuestionNumber(questionNumber + 1)
@@ -14,18 +15,23 @@ export const IngredientQuestions = ({user}) => {
         answerResponses[questionNumber]['answer'].push(e.target.value)
         console.log(answerResponses[questionNumber]['answer'])
     }
-    const calculateResults = () => {
+    const calculateResults = async () => {
         // This function makes the call to google crawl
         // Then sets answers to the response
-        return (
-            'results'
-        )
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recipes/search?search_params=toast`);
+        const json = await res.json()
+        console.log(json)
+        setAnswers(json)
+        console.log(answers)
     }
+    console.log(answers)
     return (
         
-        <div className='bg-white h-56 rounded'>
+        <div className='bg-white h-auto p-4 rounded'>
             {user ? 
                 <>
+                {answers.length < 1 ?
+                    <>
                 <h2>Question {questionNumber}</h2>
                 <div>
                     <label>{questions[questionNumber]['Question']}</label>
@@ -66,7 +72,11 @@ export const IngredientQuestions = ({user}) => {
                     Get your results
                     </button>
                     }
-                </> :
+                </> : 
+                <RecipeResults answers={answers}/>
+                }
+                </>
+                 :
                 <h2>Please log in</h2>
     }
            
