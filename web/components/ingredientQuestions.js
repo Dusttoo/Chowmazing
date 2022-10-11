@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { RecipeResults } from './recipeResults';
@@ -27,7 +28,7 @@ export const IngredientQuestions = ({user}) => {
     console.log(answers)
     return (
         
-        <div className='bg-white h-auto p-4 rounded'>
+        <div className='bg-white h-auto p-4 rounded text-center '>
             {user ? 
                 <>
                 {answers.length < 1 ?
@@ -45,7 +46,7 @@ export const IngredientQuestions = ({user}) => {
                                     id={`question-${questionNumber}`}
                                     name={`question-${questionNumber}`}
                                     type='checkbox'
-                                    className=''
+                                    className='m-2'
                                     value={option.choice}
                                     onChange={(e) => {updateOptions(e)}}
                                     />
@@ -77,7 +78,12 @@ export const IngredientQuestions = ({user}) => {
                 }
                 </>
                  :
-                <h2>Please log in</h2>
+                 <>
+                    <Link href='/auth/login'>
+                        <a>Please log in</a>
+                    </Link>
+                 </>
+                // <h2>Please log in</h2>
     }
            
         </div>
@@ -85,12 +91,12 @@ export const IngredientQuestions = ({user}) => {
   }
 
 const questions = {
-    1: {'Question': 'text',
+    1: {'Question': 'What proteins do you have?',
         'Options': [
-            {'option': 'a', 'choice' : 'choice'},
-            {'option': 'b', 'choice' : 'choice'},
-            {'option': 'c', 'choice' : 'choice'},
-            {'option': 'd', 'choice' : 'choice'}
+            {'option': 'a', 'choice' : 'Chicken'},
+            {'option': 'b', 'choice' : 'Pork'},
+            {'option': 'c', 'choice' : 'Fish'},
+            {'option': 'd', 'choice' : 'Beef'}
         ]},
     2: {'Question': 'text',
         'Options': [
